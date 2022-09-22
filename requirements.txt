@@ -9,7 +9,7 @@ omegaconf==2.1.1
 test-tube>=0.7.5
 streamlit>=0.73.1
 einops==0.3.0
-torch==1.12.1+cu116
+torch==1.12.1+cu116 # use `--extra-index-url https://download.pytorch.org/whl/cu116` when installing from command line
 torchaudio==0.12.1+cu116
 torchvision==0.13.1+cu116
 torch-fidelity==0.3.0

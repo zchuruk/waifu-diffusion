@@ -14,6 +14,8 @@ from pytorch_lightning import seed_everything
 from torch import autocast
 from contextlib import contextmanager, nullcontext
 
+sys.path.insert(0, '/home/zach/Desktop/github.com/zchuruk/waifu-diffusion')
+
 from ldm.util import instantiate_from_config
 from ldm.models.diffusion.ddim import DDIMSampler
 from ldm.models.diffusion.plms import PLMSSampler
