@@ -13,7 +13,7 @@ PIL.Image.MAX_IMAGE_PIXELS = 933120000
 
 class LocalBase(Dataset):
     def __init__(self,
-                 data_root='./danbooru-aesthetic',
+                 data_root='./test_dataset',
                  size=512,
                  interpolation="bicubic",
                  flip_p=0.5,
@@ -31,10 +31,12 @@ class LocalBase(Dataset):
 
         ext = ['png', 'jpg', 'jpeg', 'bmp']
         self.image_files = []
+        print(f"data root: {data_root}")
         [self.image_files.extend(glob.glob(f'{data_root}/img/' + '*.' + e)) for e in ext]
         if mode == 'val':
             self.image_files = self.image_files[:len(self.image_files)//val_split]
-
+        print(f"image files length ({mode}): {len(self.image_files)}")
+        print(f"image files ({mode}): {self.image_files}")
         print('Constructing image-caption map.')
 
         self.examples = {}
@@ -51,9 +53,9 @@ class LocalBase(Dataset):
 
         self.size = size
         self.interpolation = {"linear": PIL.Image.LINEAR,
-                              "bilinear": PIL.Image.BILINEAR,
-                              "bicubic": PIL.Image.BICUBIC,
-                              "lanczos": PIL.Image.LANCZOS,
+                              "bilinear": PIL.Image.Resampling.BILINEAR,
+                              "bicubic": PIL.Image.Resampling.BICUBIC,
+                              "lanczos": PIL.Image.Resampling.LANCZOS,
                               }[interpolation]
         self.flip = transforms.RandomHorizontalFlip(p=flip_p)
 

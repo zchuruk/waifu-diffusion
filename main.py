@@ -4,6 +4,8 @@ import time
 import torch
 import torchvision
 import pytorch_lightning as pl
+import json
+import pprint
 
 from packaging import version
 from omegaconf import OmegaConf
@@ -19,6 +21,8 @@ from pytorch_lightning.utilities import rank_zero_info
 
 from ldm.data.base import Txt2ImgIterableBaseDataset
 from ldm.util import instantiate_from_config
+
+pp = pprint.PrettyPrinter(indent=2)
 
 
 def get_parser(**parser_kwargs):
@@ -509,6 +513,10 @@ if __name__ == "__main__":
     cfgdir = os.path.join(logdir, "configs")
     seed_everything(opt.seed)
 
+    print(f"opt type: {type(opt)}")
+    print("opt: ")
+    pp.pprint(opt)
+
     try:
         # init and save configs
         configs = [OmegaConf.load(cfg) for cfg in opt.base]
@@ -618,10 +626,17 @@ if __name__ == "__main__":
                     # "log_momentum": True
                 }
             },
+            # "cuda_callback": {
+            #     "target": "main.CUDACallback"
+            # },
+        }
+        default_cuda_callback_cfg = {
             "cuda_callback": {
                 "target": "main.CUDACallback"
             },
         }
+        if not cpu:
+            default_callbacks_cfg = OmegaConf.merge(default_callbacks_cfg, default_cuda_callback_cfg)
         if version.parse(pl.__version__) >= version.parse('1.4.0'):
             default_callbacks_cfg.update({'checkpoint_callback': modelckpt_cfg})
 
@@ -656,8 +671,14 @@ if __name__ == "__main__":
 
         trainer_kwargs["callbacks"] = [instantiate_from_config(callbacks_cfg[k]) for k in callbacks_cfg]
 
+        print(f"trainer opt: {trainer_opt}")
+        print(f"trainer kwargs: {trainer_kwargs}")
+
         trainer = Trainer.from_argparse_args(trainer_opt, **trainer_kwargs)
         trainer.logdir = logdir  ###
+
+        print("config:")
+        pp.pprint(config)
 
         # data
         data = instantiate_from_config(config.data)
@@ -712,6 +733,9 @@ if __name__ == "__main__":
 
         signal.signal(signal.SIGUSR1, melk)
         signal.signal(signal.SIGUSR2, divein)
+
+        # print(f"model: {model}")
+        # print(f"data: {data}")
 
         # run
         if opt.train:
