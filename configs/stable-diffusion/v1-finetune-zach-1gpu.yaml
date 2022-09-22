@@ -71,8 +71,8 @@ model:
 data:
   target: main.DataModuleFromConfig
   params:
-    batch_size: 4
-    num_workers: 4
+    batch_size: 1
+    num_workers: 1
     wrap: false
     train:
       target: ldm.data.local.LocalBase
@@ -84,7 +84,7 @@ data:
       params:
         size: 512
         mode: "val"
-        val_split: 64
+        val_split: 2
 
 lightning:
   modelcheckpoint:
@@ -95,7 +95,7 @@ lightning:
       target: main.ImageLogger
       params:
         batch_frequency: 500
-        max_images: 4
+        max_images: 1
         increase_log_steps: False
         log_first_step: False
         log_images_kwargs:
@@ -103,7 +103,7 @@ lightning:
           inpaint: False
           plot_progressive_rows: False
           plot_diffusion_rows: False
-          N: 4
+          N: 1
           ddim_steps: 50
 
 trainer:
